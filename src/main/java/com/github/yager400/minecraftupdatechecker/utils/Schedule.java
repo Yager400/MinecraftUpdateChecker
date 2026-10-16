@@ -7,11 +7,13 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker.utils;
 
+import com.github.yager400.minecraftupdatechecker.MinecraftUpdateChecker;
 import com.github.yager400.minecraftupdatechecker.UpdateData;
 import com.github.yager400.minecraftupdatechecker.data.LoaderVersion;
 import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
 import com.github.yager400.minecraftupdatechecker.providers.Provider;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -23,47 +25,24 @@ public class Schedule {
     // Use this as fallback if this schedule doesn't stop
     private boolean stopFallBack = false;
 
-    public void start(
-            LoaderVersion[] loaderVersionRange,
-            SupportedLoaders[] supportedLoaders,
-            Provider provider,
-            String thisVersion,
-            String pluginSlug,
-            Consumer<UpdateData> updatePresent,
-            Runnable noUpdate,
-            Consumer<ScheduleError> onError,
-            int checkEveryXHours,
-            boolean checkNow
-    ) {
-        if (noUpdate == null) {
-            noUpdate = () -> {};
+    public void start(MinecraftUpdateChecker updateChecker) {
+        if (updateChecker.noUpdate == null) {
+            updateChecker.noUpdate = () -> {};
         }
-        if (onError == null) {
-            onError = err -> {};
+        if (updateChecker.onError == null) {
+            updateChecker.onError = err -> {};
         }
-        this.startSchedule(loaderVersionRange, supportedLoaders, provider, thisVersion, pluginSlug,
-                            updatePresent, noUpdate, onError, checkEveryXHours, checkNow);
+        this.startSchedule(updateChecker);
     }
 
-    private void startSchedule(
-            LoaderVersion[] loaderVersionRange,
-            SupportedLoaders[] supportedLoaders,
-            Provider provider,
-            String thisVersion,
-            String pluginSlug,
-            Consumer<UpdateData> updatePresent,
-            Runnable noUpdate,
-            Consumer<ScheduleError> onError,
-            int checkEveryXHours,
-            boolean checkNow
-    ) {
+    private void startSchedule(MinecraftUpdateChecker updateChecker) {
         if (this.schedule != null) {
             throw new RuntimeException("Another schedule is already running!. Do schedule.stop() before.");
         }
         this.schedule = CompletableFuture.runAsync(() -> {
-            if (!checkNow) {
+            if (!updateChecker.checkNow) {
                 try {
-                    TimeUnit.HOURS.sleep(checkEveryXHours);
+                    TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
                 } catch (InterruptedException e) {throw new RuntimeException(e);}
             }
 
@@ -72,24 +51,24 @@ public class Schedule {
                     return;
                 }
                 try {
-                    String response = provider.getApiResponse(pluginSlug);
-                    JsonArray array = GsonUtils.parseJsonArray(response);
-                    UpdateData updateData = provider.getLastSupportedVersion(
-                            loaderVersionRange,
-                            supportedLoaders,
-                            array
+                    String response = updateChecker.provider.getApiResponse(updateChecker.pluginSlug);
+                    JsonObject jsonObject = GsonUtils.parseJsonObject(response);
+                    UpdateData updateData = updateChecker.provider.getLastSupportedVersion(
+                            updateChecker.loaderVersionRange,
+                            updateChecker.supportedLoaders,
+                            jsonObject
                     );
-                    if (!updateData.getNewVersion().equals(thisVersion)) {
-                        updatePresent.accept(updateData);
+                    if (!updateData.getNewVersion().equals(updateChecker.thisVersion)) {
+                        updateChecker.updatePresent.accept(updateData);
                     } else {
-                        noUpdate.run();
+                        updateChecker.noUpdate.run();
                     }
 
-                    TimeUnit.HOURS.sleep(checkEveryXHours);
+                    TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
                 } catch (Exception e) {
-                    onError.accept(new ScheduleError(e, this));
+                    updateChecker.onError.accept(new ScheduleError(e, this));
                     try {
-                        TimeUnit.HOURS.sleep(checkEveryXHours);
+                        TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
                     } catch (Exception ee) {
                         ee.printStackTrace();
                     }
@@ -101,6 +80,7 @@ public class Schedule {
     public void stop() {
         this.schedule.cancel(true);
         this.stopFallBack = true;
+        this.schedule = null;
     }
 
     public CompletableFuture<Void> getFuture() {

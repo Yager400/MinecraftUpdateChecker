@@ -7,6 +7,7 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker.data;
 
+import com.github.yager400.minecraftupdatechecker.providers.HangarProvider;
 import com.github.yager400.minecraftupdatechecker.providers.ModrinthProvider;
 import com.github.yager400.minecraftupdatechecker.providers.Provider;
 
@@ -17,7 +18,7 @@ public enum PluginProviders {
      * @Experimental This plugin provider is not fully completed and might
      * be instable.<br> Proceed carefully.
      */
-    HANGAR(new ModrinthProvider());
+    HANGAR(new HangarProvider());
 
     private final Provider provider;
 

@@ -8,17 +8,18 @@ See the LICENSE file for details.
 package com.github.yager400.minecraftupdatechecker.utils;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class GsonUtils {
 
-    protected static JsonArray parseJsonArray(String responseBody) {
-        JsonArray array;
+    protected static JsonObject parseJsonObject(String responseBody) {
+        JsonObject array;
         try {
-            array = JsonParser.parseString(responseBody).getAsJsonArray();
+            array = JsonParser.parseString(responseBody).getAsJsonObject();
         } catch (NoSuchMethodError e) {
             // Use this if the gson version is too old
-            array = new JsonParser().parse(responseBody).getAsJsonArray();
+            array = new JsonParser().parse(responseBody).getAsJsonObject();
         }
         return array;
     }

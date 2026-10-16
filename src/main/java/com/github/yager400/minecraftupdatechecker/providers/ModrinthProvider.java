@@ -12,6 +12,7 @@ import com.github.yager400.minecraftupdatechecker.data.LoaderVersion;
 import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,7 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
 
-public class ModrinthProvider implements Provider {
+public class ModrinthProvider extends Provider {
 
     private static final String MODRINTH_API_URL =
             "https://api.modrinth.com/v2/project/%s/version";
@@ -35,49 +36,33 @@ public class ModrinthProvider implements Provider {
     }
 
     @Override
-    public UpdateData getLatest(JsonArray array) {
-        if (array == null || array.isEmpty()) {
+    public UpdateData getLatest(JsonObject jsonObject) {
+        if (jsonObject == null || jsonObject.getAsJsonArray().isEmpty()) {
             return null;
         }
-        JsonElement element = array.get(0);
+        JsonElement element = jsonObject.getAsJsonArray().get(0);
         return getUpdateDataFromElement(element);
     }
 
     @Override
-    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonArray array) {
-        if (array == null || array.isEmpty()) {
+    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject jsonObject) {
+        if (jsonObject == null || jsonObject.isEmpty()) {
             return null;
         }
 
-        for (JsonElement element : array) {
-            boolean hasVersion = false;
-            boolean hasLoader = false;
+        for (JsonElement element : jsonObject.getAsJsonArray()) {
+            boolean hasVersion;
+            boolean hasLoader;
 
             Iterator<JsonElement> gameVersions = element.getAsJsonObject()
-                    .get("game_versions")
-                    .getAsJsonArray()
+                    .get("game_versions").getAsJsonArray()
                     .iterator();
-            while (gameVersions.hasNext()) {
-                String gameVersion = gameVersions.next().getAsString();
-                for (LoaderVersion version : versions) {
-                    if (gameVersion.equals(version.getVersion())) {
-                        hasVersion = true;
-                    }
-                }
-            }
+            hasVersion = this.iterateGameVersion(gameVersions, versions);
 
             Iterator<JsonElement> supportedLoaders = element.getAsJsonObject()
-                    .get("loaders")
-                    .getAsJsonArray()
+                    .get("loaders").getAsJsonArray()
                     .iterator();
-            while (supportedLoaders.hasNext()) {
-                String supportedLoader = supportedLoaders.next().getAsString();
-                for (SupportedLoaders loader : loaders) {
-                    if (supportedLoader.equals(loader.getLoader())) {
-                        hasLoader = true;
-                    }
-                }
-            }
+            hasLoader = this.iterateLoaders(supportedLoaders, loaders);
 
             if (hasVersion && hasLoader) {
                 return getUpdateDataFromElement(element);

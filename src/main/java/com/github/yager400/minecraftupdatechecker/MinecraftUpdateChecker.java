@@ -19,16 +19,16 @@ import java.util.function.Consumer;
 
 public class MinecraftUpdateChecker {
 
-    private LoaderVersion[] loaderVersionRange;
-    private SupportedLoaders[] supportedLoaders;
-    private Provider provider;
-    private String thisVersion;
-    private String pluginSlug;
-    private Consumer<UpdateData> updatePresent;
-    private Runnable noUpdate;
-    private Consumer<ScheduleError> onError;
-    private int checkEveryXHours = 1;
-    private boolean checkNow = true;
+    public LoaderVersion[] loaderVersionRange;
+    public SupportedLoaders[] supportedLoaders;
+    public Provider provider;
+    public String thisVersion;
+    public String pluginSlug;
+    public Consumer<UpdateData> updatePresent;
+    public Runnable noUpdate;
+    public Consumer<ScheduleError> onError;
+    public int checkEveryXHours = 1;
+    public boolean checkNow = true;
 
     public MinecraftUpdateChecker setLoaderVersionRange(LoaderVersion from, LoaderVersion to) {
         this.loaderVersionRange = LoaderVersion.getRange(from, to);
@@ -81,19 +81,15 @@ public class MinecraftUpdateChecker {
     }
 
     public Schedule start() {
-        try {
-            Objects.requireNonNull(loaderVersionRange);
-            Objects.requireNonNull(supportedLoaders);
-            Objects.requireNonNull(provider);
-            Objects.requireNonNull(thisVersion);
-            Objects.requireNonNull(pluginSlug);
-            Objects.requireNonNull(updatePresent);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        Objects.requireNonNull(loaderVersionRange,  "The loader version range cannot be null!");
+        Objects.requireNonNull(supportedLoaders,    "The supported loaders cannot be null!");
+        Objects.requireNonNull(provider,            "The plugin provider cannot be null!");
+        Objects.requireNonNull(thisVersion,         "The actual version of this plugin cannot be null!");
+        Objects.requireNonNull(pluginSlug,          "The plugin slug (or name) cannot be null!");
+        Objects.requireNonNull(updatePresent,       "The update present's consumer cannot be null!");
+
         Schedule schedule = new Schedule();
-        schedule.start(loaderVersionRange, supportedLoaders, provider, thisVersion, pluginSlug,
-                       updatePresent, noUpdate, onError, checkEveryXHours, checkNow);
+        schedule.start(this);
         return schedule;
     }
 

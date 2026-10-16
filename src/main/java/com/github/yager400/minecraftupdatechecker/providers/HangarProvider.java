@@ -23,94 +23,49 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
-public class HangarProvider implements Provider {
+public class HangarProvider extends Provider {
 
     private static final String HANGAR_API_URL =
             "https://hangar.papermc.io/api/v1/projects/%s/versions";
 
     private UpdateData getUpdateDataFromElement(JsonElement element) {
-        JsonObject object = element.getAsJsonObject();
-
-        String name = object.get("name").getAsString();
-        String version = object.get("name").getAsString();
-        String versionType = object.has("channel")
-                ? object.getAsJsonObject("channel").get("name").getAsString()
-                : "release";
-        String changelog = object.has("description")
-                && !object.get("description").isJsonNull()
-                ? object.get("description").getAsString()
-                : "";
-
-        return new UpdateData(name, versionType, version, changelog);
+        return new UpdateData(
+                element.getAsJsonObject().get("name").getAsString(),
+                element.getAsJsonObject().get("channel").getAsJsonObject().get("name").getAsString(),
+                element.getAsJsonObject().get("channel").getAsJsonObject().get("name").getAsString(),
+                element.getAsJsonObject().get("description").getAsString()
+        );
     }
 
     @Override
-    public UpdateData getLatest(JsonArray array) {
-        if (array == null || array.isEmpty()) {
+    public UpdateData getLatest(JsonObject jsonObject) {
+        if (jsonObject == null || jsonObject.getAsJsonArray().isEmpty()) {
             return null;
         }
-        JsonObject response = array.get(0).getAsJsonObject();
-        if (response.has("result")) {
-            JsonArray versions = response.getAsJsonArray("result");
-            return versions.isEmpty()
-                    ? null
-                    : getUpdateDataFromElement(versions.get(0));
-        }
-        return getUpdateDataFromElement(array.get(0));
+        JsonElement element = jsonObject.get("result").getAsJsonArray().get(0);
+        return getUpdateDataFromElement(element);
     }
 
     @Override
-    public UpdateData getLastSupportedVersion(
-            LoaderVersion[] versions,
-            SupportedLoaders[] loaders,
-            JsonArray array
-    ) {
-        if (array == null) {
+    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject jsonObject) {
+        if (jsonObject == null) {
             return null;
         }
+        JsonArray resultArray = jsonObject.get("result").getAsJsonArray();
+        for (JsonElement element : resultArray) {
+            boolean hasVersion;
+            boolean hasLoader;
 
-        for (JsonElement element : array) {
-            JsonObject object = element.getAsJsonObject();
-            if (!object.has("platformDependencies")
-                    || object.get("platformDependencies").isJsonNull()) {
-                continue;
-            }
-            JsonObject dependencies =
-                    object.getAsJsonObject("platformDependencies");
+            Iterator<JsonElement> gameVersions = element.getAsJsonObject()
+                    .get("platformDependencies").getAsJsonObject()
+                    .get("PAPER").getAsJsonArray()
+                    .iterator();
+            hasVersion = this.iterateGameVersion(gameVersions, versions);
 
-            boolean hasVersion = false;
-            boolean hasLoader = false;
-            for (SupportedLoaders loader : loaders) {
-                String platform = loader.getLoader().toUpperCase();
-
-                if (!dependencies.has(platform)
-                        || dependencies.get(platform).isJsonNull()) {
-                    continue;
-                }
-
-                hasLoader = true;
-
-                JsonArray gameVersions = dependencies.getAsJsonArray(platform);
-
-                for (JsonElement gameVersion : gameVersions) {
-                    String supportedVersion = gameVersion.getAsString();
-
-                    for (LoaderVersion version : versions) {
-                        if (supportedVersion.equals(version.getVersion())) {
-                            hasVersion = true;
-                            break;
-                        }
-                    }
-
-                    if (hasVersion) {
-                        break;
-                    }
-                }
-
-                if (hasLoader && hasVersion) {
-                    break;
-                }
-            }
+            Iterator<JsonElement> supportedLoaders = element.getAsJsonObject()
+                    .get("platformDependenciesFormatted").getAsJsonArray()
+                    .iterator();
+            hasLoader = this.iterateLoaders(supportedLoaders, loaders);
 
             if (hasVersion && hasLoader) {
                 return getUpdateDataFromElement(element);
@@ -122,33 +77,17 @@ public class HangarProvider implements Provider {
 
     @Override
     public String getApiResponse(String pluginSlug) throws Exception {
-        URL url = URI.create(
-                String.format(HANGAR_API_URL, pluginSlug)
-        ).toURL();
-
+        URL url = URI.create(String.format(HANGAR_API_URL, pluginSlug)).toURL();
         URLConnection connection = url.openConnection();
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(5000);
-        connection.setRequestProperty(
-                "Accept",
-                "application/json"
-        );
-
         StringBuilder response = new StringBuilder();
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(
-                        connection.getInputStream(),
-                        StandardCharsets.UTF_8
-                )
-        )) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             String line;
-
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
         }
-
         return response.toString();
     }
 }
