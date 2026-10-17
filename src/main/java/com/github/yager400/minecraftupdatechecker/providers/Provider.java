@@ -14,6 +14,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 
 /*
@@ -51,5 +56,20 @@ public abstract class Provider {
             }
         }
         return false;
+    }
+
+    public String getDefaultApiResponse(String apiUrl, String pluginSlug) throws Exception {
+        URL url = URI.create(String.format(apiUrl, pluginSlug)).toURL();
+        URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        }
+        return response.toString();
     }
 }

@@ -73,17 +73,6 @@ public class ModrinthProvider extends Provider {
 
     @Override
     public String getApiResponse(String pluginSlug) throws Exception {
-        URL url = URI.create(String.format(MODRINTH_API_URL, pluginSlug)).toURL();
-        URLConnection connection = url.openConnection();
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-        }
-        return response.toString();
+        return this.getDefaultApiResponse(MODRINTH_API_URL, pluginSlug);
     }
 }

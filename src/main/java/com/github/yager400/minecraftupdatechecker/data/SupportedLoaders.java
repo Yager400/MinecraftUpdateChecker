@@ -16,7 +16,11 @@ public enum SupportedLoaders {
     FOLIA       ("folia"),
     BUNGEECORD  ("bungeecord"),
     VELOCITY    ("velocity"),
-    WATERFALL   ("waterfall");
+    WATERFALL   ("waterfall"),
+    FABRIC      ("fabric"),
+    FORGE       ("forge"),
+    NEOFORGE    ("neoforge"),
+    QUILT       ("quilt");
 
     private final String loader;
 
