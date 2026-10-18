@@ -26,31 +26,37 @@ public class ModrinthProvider extends Provider {
     private static final String MODRINTH_API_URL =
             "https://api.modrinth.com/v2/project/%s/version";
 
-    private UpdateData getUpdateDataFromElement(JsonElement element) {
+    private UpdateData getUpdateDataFromElement(JsonObject object) {
         return new UpdateData(
-                element.getAsJsonObject().get("name").getAsString(),
-                element.getAsJsonObject().get("version_type").getAsString(),
-                element.getAsJsonObject().get("version_number").getAsString(),
-                element.getAsJsonObject().get("changelog").getAsString()
+                object.get("name").getAsString(),
+                object.get("version_type").getAsString(),
+                object.get("version_number").getAsString(),
+                object.get("changelog").getAsString()
         );
     }
 
-    @Override
-    public UpdateData getLatest(JsonObject jsonObject) {
-        if (jsonObject == null || jsonObject.getAsJsonArray().isEmpty()) {
-            return null;
-        }
-        JsonElement element = jsonObject.getAsJsonArray().get(0);
-        return getUpdateDataFromElement(element);
+    public JsonArray parse(String json) {
+        return this.parseJsonArray(json);
     }
 
     @Override
-    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject jsonObject) {
-        if (jsonObject == null || jsonObject.isEmpty()) {
+    public UpdateData getLatest(String json) {
+        JsonArray jsonArray = this.parse(json);
+        if (jsonArray == null || jsonArray.getAsJsonArray().isEmpty()) {
+            return null;
+        }
+        JsonElement element = jsonArray.get(0);
+        return getUpdateDataFromElement(element.getAsJsonObject());
+    }
+
+    @Override
+    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, String json) {
+        JsonArray jsonArray = this.parse(json);
+        if (jsonArray == null || jsonArray.isEmpty()) {
             return null;
         }
 
-        for (JsonElement element : jsonObject.getAsJsonArray()) {
+        for (JsonElement element : jsonArray) {
             boolean hasVersion;
             boolean hasLoader;
 
@@ -65,14 +71,14 @@ public class ModrinthProvider extends Provider {
             hasLoader = this.iterateLoaders(supportedLoaders, loaders);
 
             if (hasVersion && hasLoader) {
-                return getUpdateDataFromElement(element);
+                return getUpdateDataFromElement(element.getAsJsonObject());
             }
         }
         return null;
     }
 
     @Override
-    public String getApiResponse(String pluginSlug) throws Exception {
-        return this.getDefaultApiResponse(MODRINTH_API_URL, pluginSlug);
+    public String getApiResponse(String pluginIdentifier) throws Exception {
+        return this.getDefaultApiResponse(MODRINTH_API_URL, pluginIdentifier);
     }
 }

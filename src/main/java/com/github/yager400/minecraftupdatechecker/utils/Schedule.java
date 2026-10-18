@@ -51,13 +51,15 @@ public class Schedule {
                     return;
                 }
                 try {
-                    String response = updateChecker.provider.getApiResponse(updateChecker.pluginSlug);
-                    JsonObject jsonObject = GsonUtils.parseJsonObject(response);
+                    String response = updateChecker.provider.getApiResponse(updateChecker.pluginIdentifier);
                     UpdateData updateData = updateChecker.provider.getLastSupportedVersion(
                             updateChecker.loaderVersionRange,
                             updateChecker.supportedLoaders,
-                            jsonObject
+                            response
                     );
+                    if (updateData == null) {
+                        throw new NullPointerException("UpdateData is null!");
+                    }
                     if (!updateData.getNewVersion().equals(updateChecker.thisVersion)) {
                         updateChecker.updatePresent.accept(updateData);
                     } else {

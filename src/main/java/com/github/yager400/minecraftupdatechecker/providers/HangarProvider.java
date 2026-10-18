@@ -22,39 +22,46 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.Set;
 
 public class HangarProvider extends Provider {
 
     private static final String HANGAR_API_URL =
             "https://hangar.papermc.io/api/v1/projects/%s/versions";
 
-    private UpdateData getUpdateDataFromElement(JsonElement element) {
+    private UpdateData getUpdateDataFromElement(JsonObject object) {
         return new UpdateData(
-                element.getAsJsonObject().get("name").getAsString(),
-                element.getAsJsonObject().get("channel").getAsJsonObject().get("name").getAsString(),
-                element.getAsJsonObject().get("channel").getAsJsonObject().get("name").getAsString(),
-                element.getAsJsonObject().get("description").getAsString()
+                object.get("name").getAsString(),
+                object.get("channel").getAsJsonObject().get("name").getAsString(),
+                object.get("name").getAsString(),
+                object.get("description").getAsString()
         );
     }
 
+    public JsonObject parse(String json) {
+        return this.parseJsonObject(json);
+    }
+
     @Override
-    public UpdateData getLatest(JsonObject jsonObject) {
+    public UpdateData getLatest(String json) {
+        JsonObject jsonObject = this.parse(json);
         if (jsonObject == null || jsonObject.getAsJsonArray().isEmpty()) {
             return null;
         }
         JsonElement element = jsonObject.get("result").getAsJsonArray().get(0);
-        return getUpdateDataFromElement(element);
+        return getUpdateDataFromElement(element.getAsJsonObject());
     }
 
     @Override
-    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject jsonObject) {
+    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, String json) {
+        JsonObject jsonObject = this.parse(json);
         if (jsonObject == null) {
             return null;
         }
         JsonArray resultArray = jsonObject.get("result").getAsJsonArray();
         for (JsonElement element : resultArray) {
             boolean hasVersion;
-            boolean hasLoader;
+            boolean hasLoader = false;
 
             Iterator<JsonElement> gameVersions = element.getAsJsonObject()
                     .get("platformDependencies").getAsJsonObject()
@@ -62,13 +69,19 @@ public class HangarProvider extends Provider {
                     .iterator();
             hasVersion = this.iterateGameVersion(gameVersions, versions);
 
-            Iterator<JsonElement> supportedLoaders = element.getAsJsonObject()
-                    .get("platformDependenciesFormatted").getAsJsonArray()
-                    .iterator();
-            hasLoader = this.iterateLoaders(supportedLoaders, loaders);
+            Set<String> supportedLoaders = element.getAsJsonObject()
+                    .get("platformDependenciesFormatted").getAsJsonObject().keySet();
+            for (String loaderVersion : supportedLoaders) {
+                for (SupportedLoaders version : loaders) {
+                    if (loaderVersion.equals(version.getLoader().toUpperCase())) {
+                        hasLoader = true;
+                        break;
+                    }
+                }
+            }
 
             if (hasVersion && hasLoader) {
-                return getUpdateDataFromElement(element);
+                return getUpdateDataFromElement(element.getAsJsonObject());
             }
         }
 
@@ -76,7 +89,7 @@ public class HangarProvider extends Provider {
     }
 
     @Override
-    public String getApiResponse(String pluginSlug) throws Exception {
-        return this.getDefaultApiResponse(HANGAR_API_URL, pluginSlug);
+    public String getApiResponse(String pluginIdentifier) throws Exception {
+        return this.getDefaultApiResponse(HANGAR_API_URL, pluginIdentifier);
     }
 }

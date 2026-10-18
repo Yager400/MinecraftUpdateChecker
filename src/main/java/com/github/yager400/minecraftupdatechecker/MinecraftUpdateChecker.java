@@ -23,7 +23,7 @@ public class MinecraftUpdateChecker {
     public SupportedLoaders[] supportedLoaders;
     public Provider provider;
     public String thisVersion;
-    public String pluginSlug;
+    public String pluginIdentifier;
     public Consumer<UpdateData> updatePresent;
     public Runnable noUpdate;
     public Consumer<ScheduleError> onError;
@@ -50,8 +50,8 @@ public class MinecraftUpdateChecker {
         return this;
     }
 
-    public MinecraftUpdateChecker setPluginSlug(String pluginSlug) {
-        this.pluginSlug = pluginSlug;
+    public MinecraftUpdateChecker setPluginIdentifier(String pluginIdentifier) {
+        this.pluginIdentifier = pluginIdentifier;
         return this;
     }
 
@@ -85,7 +85,7 @@ public class MinecraftUpdateChecker {
         Objects.requireNonNull(supportedLoaders,    "The supported loaders cannot be null!");
         Objects.requireNonNull(provider,            "The plugin provider cannot be null!");
         Objects.requireNonNull(thisVersion,         "The actual version of this plugin cannot be null!");
-        Objects.requireNonNull(pluginSlug,          "The plugin slug (or name) cannot be null!");
+        Objects.requireNonNull(pluginIdentifier,    "The plugin identifier cannot be null!");
         Objects.requireNonNull(updatePresent,       "The update present's consumer cannot be null!");
 
         Schedule schedule = new Schedule();

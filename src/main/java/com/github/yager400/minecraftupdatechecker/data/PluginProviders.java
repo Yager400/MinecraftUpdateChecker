@@ -10,6 +10,7 @@ package com.github.yager400.minecraftupdatechecker.data;
 import com.github.yager400.minecraftupdatechecker.providers.HangarProvider;
 import com.github.yager400.minecraftupdatechecker.providers.ModrinthProvider;
 import com.github.yager400.minecraftupdatechecker.providers.Provider;
+import com.github.yager400.minecraftupdatechecker.providers.SpigotProvider;
 
 public enum PluginProviders {
 
@@ -18,7 +19,8 @@ public enum PluginProviders {
      * @Experimental This plugin provider is not fully completed and might
      * be instable.<br> Proceed carefully.
      */
-    HANGAR(new HangarProvider());
+    HANGAR(new HangarProvider()),
+    SPIGOT(new SpigotProvider());
 
     private final Provider provider;
 

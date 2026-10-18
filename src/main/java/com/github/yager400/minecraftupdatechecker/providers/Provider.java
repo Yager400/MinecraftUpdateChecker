@@ -13,6 +13,7 @@ import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,9 +32,31 @@ public interface Provider {
 
 public abstract class Provider {
 
-    public abstract UpdateData getLatest(JsonObject jsonObject);
-    public abstract UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject jsonObject);
-    public abstract String getApiResponse(String pluginSlug) throws Exception;
+    public abstract UpdateData getLatest(String json);
+    public abstract UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, String json);
+    public abstract String getApiResponse(String pluginIdentifier) throws Exception;
+
+    public JsonObject parseJsonObject(String json) {
+        JsonObject object;
+        try {
+            object = JsonParser.parseString(json).getAsJsonObject();
+        } catch (NoSuchMethodError e) {
+            // Use this if the gson version is too old
+            object = new JsonParser().parse(json).getAsJsonObject();
+        }
+        return object;
+    }
+
+    public JsonArray parseJsonArray(String json) {
+        JsonArray array;
+        try {
+            array = JsonParser.parseString(json).getAsJsonArray();
+        } catch (NoSuchMethodError e) {
+            // Use this if the gson version is too old
+            array = new JsonParser().parse(json).getAsJsonArray();
+        }
+        return array;
+    }
 
     public boolean iterateGameVersion(Iterator<JsonElement> iterator, LoaderVersion[] versions) {
         while (iterator.hasNext()) {
