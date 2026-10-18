@@ -25,18 +25,38 @@ public final class UpdateData {
         this.changelogs = changelogs;
     }
 
+    /**
+     * Get the plugin/mod version name
+     * @return Plugin/Mod version name
+     * @since 1.0.0
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Get the plugin/mod version type (if available)
+     * @return The version type of this version (eg RELEASE, BETA and ALPHA)
+     * @since 1.0.0
+     */
     public VersionType getVersionType() {
         return this.versionType;
     }
 
+    /**
+     * Get the new plugin/mod version
+     * @return Plugin/Mod version
+     * @since 1.0.0
+     */
     public String getNewVersion() {
         return this.newVersion;
     }
 
+    /**
+     * Get the changelogs/description of the plugin/mod version
+     * @return Changelogs/description of the version
+     * @since 1.0.0
+     */
     public String getChangelogs() {
         return this.changelogs;
     }

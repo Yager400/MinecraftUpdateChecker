@@ -30,56 +30,145 @@ public class MinecraftUpdateChecker {
     protected int checkEveryXHours = 1;
     protected boolean checkNow = true;
 
+    /**
+     * Sets the plugin/mod supported versions.
+     * @param from The oldest version your plugin/mod supports
+     * @param to The newest version your plugin/mod supports.<br>
+     *           You can also use LoaderVersion.LATEST if you are sure that your plugin/mod will work for the next versions
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker setLoaderVersionRange(LoaderVersion from, LoaderVersion to) {
         this.loaderVersionRange = LoaderVersion.getRange(from, to);
         return this;
     }
 
+    /**
+     * Sets the loaders for your plugin/mod.
+     * @param loaders The plugin/mod loader. If the plugin provider supports it, you will get every update for your loader (eg only for velocity)
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker setSupportedLoader(SupportedLoaders... loaders) {
         this.supportedLoaders = loaders;
         return this;
     }
 
+    /**
+     * Sets the place where your plugin/mod is hosted
+     * @param provider The plugin/mod provider (eg Modrinth, Hangar or Spigot)
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker setPluginProvider(PluginProviders provider) {
         this.provider = provider.getProvider();
         return this;
     }
 
+    /**
+     * Set a custom plugin/mod provider, likely one that you made
+     * @param provider Your plugin/mod provider instance
+     * @see MinecraftUpdateChecker#setPluginProvider(PluginProviders)  If you want to use an already existing provider (racomanded)
+     * @return This instance
+     * @since 1.0.0
+     */
+    public MinecraftUpdateChecker setCustomPluginProvider(Provider provider) {
+        this.provider = provider;
+        return this;
+    }
+
+    /**
+     * Set this plugin/mod version that will be compared from the newer/older ones
+     * @param version Your plugin/mod version as string
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker setVersion(String version) {
         this.thisVersion = version;
         return this;
     }
 
+    /**
+     * Sets the plugin/mod identifier.<br> This can be different based of your plugin provider (eg for Modrinth if the slug, Hangar the name and Spigot the id)
+     * @param pluginIdentifier The plugin/mod identifier as string
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker setPluginIdentifier(String pluginIdentifier) {
         this.pluginIdentifier = pluginIdentifier;
         return this;
     }
 
+    /**
+     * Sets a consumer that will be run when a new update is present
+     * @param updatePresent Your consumer
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker onUpdatePresent(Consumer<UpdateData> updatePresent) {
         this.updatePresent = updatePresent;
         return this;
     }
 
+    /**
+     * Run this runnable if there is no update
+     * @param noUpdate Your runnable
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker onNoUpdatePresent(Runnable noUpdate) {
         this.noUpdate = noUpdate;
         return this;
     }
 
+    /**
+     * Sets a consumer that will run when an error is thrown during the update check
+     * @param onError Your consumer
+     * @return This instance
+     * @since 1.0.0
+     * @Required this field is required
+     */
     public MinecraftUpdateChecker onError(Consumer<ScheduleError> onError) {
         this.onError = onError;
         return this;
     }
 
+    /**
+     * Sets the interval (in hours) while checking for a new update<br>
+     * <b>If an error is thrown, the next check will still happen after X hours</b><br>
+     * <b>By default, is 1</b>
+     * @param hours Hours to wait between every check
+     * @return This instance
+     * @since 1.0.0
+     */
     public MinecraftUpdateChecker checkEveryXHours(int hours) {
         this.checkEveryXHours = hours;
         return this;
     }
 
+    /**
+     * Should the update check being done instantly when the plugin/mod starts.<br>
+     * <b>By default, is true</b>
+     * @param checkNow True to check now, otherwise false
+     * @return This instance
+     * @since 1.0.0
+     */
     public MinecraftUpdateChecker checkNow(boolean checkNow) {
         this.checkNow = checkNow;
         return this;
     }
 
+    /**
+     * Stars the update async schedule
+     * @return The schedule instance
+     */
     public Schedule start() {
         Objects.requireNonNull(loaderVersionRange,  "The loader version range cannot be null!");
         Objects.requireNonNull(supportedLoaders,    "The supported loaders cannot be null!");

@@ -26,9 +26,17 @@ public class Schedule {
 
     private volatile ScheduledFuture<?> future;
 
+    /**
+     * Start this schedule if it's not running
+     * @param updateSettings The updateSettings for checking the updates
+     * @since 1.0.0
+     */
     public synchronized void start(UpdateSettings updateSettings) {
         if (this.future != null) {
             throw new IllegalStateException("Already started. Call stop() first.");
+        }
+        if (updateSettings.getCheckEveryXHours() <= 0) {
+            throw new IllegalArgumentException("checkEveryXHours must be less or equal than 0");
         }
         this.future = scheduler.scheduleWithFixedDelay(
                 () -> check(updateSettings),
@@ -64,7 +72,10 @@ public class Schedule {
         }
     }
 
-
+    /**
+     * Stop this schedule
+     * @since 1.0.0
+     */
     public synchronized void stop() {
         ScheduledFuture<?> f = this.future;
         if (f != null) {

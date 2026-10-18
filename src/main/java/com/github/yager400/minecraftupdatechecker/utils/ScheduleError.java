@@ -17,10 +17,20 @@ public final class ScheduleError {
         this.schedule = schedule;
     }
 
+    /**
+     * Get the thrown error
+     * @return The error thrown as Throwable
+     * @since 1.0.0
+     */
     public Throwable getThrowable() {
         return this.throwable;
     }
 
+    /**
+     * Returns the schedule instance
+     * @return The schedule instance that caused this error
+     * @since 1.0.0
+     */
     public Schedule getSchedule() {
         return this.schedule;
     }
