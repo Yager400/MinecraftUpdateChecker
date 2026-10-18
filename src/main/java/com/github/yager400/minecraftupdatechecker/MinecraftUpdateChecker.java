@@ -19,16 +19,16 @@ import java.util.function.Consumer;
 
 public class MinecraftUpdateChecker {
 
-    public LoaderVersion[] loaderVersionRange;
-    public SupportedLoaders[] supportedLoaders;
-    public Provider provider;
-    public String thisVersion;
-    public String pluginIdentifier;
-    public Consumer<UpdateData> updatePresent;
-    public Runnable noUpdate;
-    public Consumer<ScheduleError> onError;
-    public int checkEveryXHours = 1;
-    public boolean checkNow = true;
+    protected LoaderVersion[] loaderVersionRange;
+    protected SupportedLoaders[] supportedLoaders;
+    protected Provider provider;
+    protected String thisVersion;
+    protected String pluginIdentifier;
+    protected Consumer<UpdateData> updatePresent;
+    protected Runnable noUpdate;
+    protected Consumer<ScheduleError> onError;
+    protected int checkEveryXHours = 1;
+    protected boolean checkNow = true;
 
     public MinecraftUpdateChecker setLoaderVersionRange(LoaderVersion from, LoaderVersion to) {
         this.loaderVersionRange = LoaderVersion.getRange(from, to);
@@ -89,7 +89,7 @@ public class MinecraftUpdateChecker {
         Objects.requireNonNull(updatePresent,       "The update present's consumer cannot be null!");
 
         Schedule schedule = new Schedule();
-        schedule.start(this);
+        schedule.start(new UpdateSettings(this));
         return schedule;
     }
 

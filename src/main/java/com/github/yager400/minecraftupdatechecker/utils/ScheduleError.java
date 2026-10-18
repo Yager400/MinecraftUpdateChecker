@@ -7,18 +7,18 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker.utils;
 
-public class ScheduleError {
+public final class ScheduleError {
 
-    private final Exception exception;
+    private final Throwable throwable;
     private final Schedule schedule;
 
-    public ScheduleError(Exception exception, Schedule schedule) {
-        this.exception = exception;
+    public ScheduleError(Throwable throwable, Schedule schedule) {
+        this.throwable = throwable;
         this.schedule = schedule;
     }
 
-    public Exception getException() {
-        return this.exception;
+    public Throwable getThrowable() {
+        return this.throwable;
     }
 
     public Schedule getSchedule() {

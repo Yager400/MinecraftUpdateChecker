@@ -9,7 +9,7 @@ package com.github.yager400.minecraftupdatechecker;
 
 import com.github.yager400.minecraftupdatechecker.data.VersionType;
 
-public class UpdateData {
+public final class UpdateData {
 
     private final String name;
     private final VersionType versionType;

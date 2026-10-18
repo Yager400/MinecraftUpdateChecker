@@ -22,14 +22,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
 
-/*
-public interface Provider {
-    UpdateData getLatest(JsonObject array);
-    UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, JsonObject array);
-    String getApiResponse(String pluginSlug) throws Exception;
-}
- */
-
 public abstract class Provider {
 
     public abstract UpdateData getLatest(String json);

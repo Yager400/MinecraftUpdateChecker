@@ -7,86 +7,64 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker.utils;
 
-import com.github.yager400.minecraftupdatechecker.MinecraftUpdateChecker;
 import com.github.yager400.minecraftupdatechecker.UpdateData;
-import com.github.yager400.minecraftupdatechecker.data.LoaderVersion;
-import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
-import com.github.yager400.minecraftupdatechecker.providers.Provider;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.github.yager400.minecraftupdatechecker.UpdateSettings;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class Schedule {
 
-    private CompletableFuture<Void> schedule;
-    // Use this as fallback if this schedule doesn't stop
-    private boolean stopFallBack = false;
+    private final ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread t = new Thread(runnable, "MinecraftUpdateChecker");
+                t.setDaemon(true);
+                return t;
+            });
 
-    public void start(MinecraftUpdateChecker updateChecker) {
-        if (updateChecker.noUpdate == null) {
-            updateChecker.noUpdate = () -> {};
-        }
-        if (updateChecker.onError == null) {
-            updateChecker.onError = err -> {};
-        }
-        this.startSchedule(updateChecker);
+    public void start(UpdateSettings updateSettings) {
+        this.scheduler.scheduleWithFixedDelay(
+                () -> this.check(updateSettings),
+                (!updateSettings.isCheckNow()) ? updateSettings.getCheckEveryXHours() : 0,
+                updateSettings.getCheckEveryXHours(),
+                TimeUnit.HOURS
+        );
     }
 
-    private void startSchedule(MinecraftUpdateChecker updateChecker) {
-        if (this.schedule != null) {
-            throw new RuntimeException("Another schedule is already running!. Do schedule.stop() before.");
+    private void check(UpdateSettings updateSettings) {
+        try {
+            String response = updateSettings.getProvider().getApiResponse(updateSettings.getPluginIdentifier());
+            UpdateData updateData = updateSettings.getProvider().getLastSupportedVersion(
+                    updateSettings.getLoaderVersionRange(),
+                    updateSettings.getSupportedLoaders(),
+                    response
+            );
+            if (updateData == null) {
+                // The UpdateData is null when no update is found (even old ones), should we throw an exception or run the noUpdate runnable?
+                //throw new NullPointerException("UpdateData is null! (No version was found)");
+                updateSettings.getNoUpdate().run();
+                return;
+            }
+            if (!updateData.getNewVersion().equals(updateSettings.getThisVersion())) {
+                updateSettings.getUpdatePresent().accept(updateData);
+            } else {
+                updateSettings.getNoUpdate().run();
+            }
+        } catch (Throwable e) {
+            try {
+                updateSettings.getOnError().accept(new ScheduleError(e, this));
+            } catch (Throwable ignored) {}
         }
-        this.schedule = CompletableFuture.runAsync(() -> {
-            if (!updateChecker.checkNow) {
-                try {
-                    TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
-                } catch (InterruptedException e) {throw new RuntimeException(e);}
-            }
-
-            while (true) {
-                if (stopFallBack) {
-                    return;
-                }
-                try {
-                    String response = updateChecker.provider.getApiResponse(updateChecker.pluginIdentifier);
-                    UpdateData updateData = updateChecker.provider.getLastSupportedVersion(
-                            updateChecker.loaderVersionRange,
-                            updateChecker.supportedLoaders,
-                            response
-                    );
-                    if (updateData == null) {
-                        throw new NullPointerException("UpdateData is null!");
-                    }
-                    if (!updateData.getNewVersion().equals(updateChecker.thisVersion)) {
-                        updateChecker.updatePresent.accept(updateData);
-                    } else {
-                        updateChecker.noUpdate.run();
-                    }
-
-                    TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
-                } catch (Exception e) {
-                    updateChecker.onError.accept(new ScheduleError(e, this));
-                    try {
-                        TimeUnit.HOURS.sleep(updateChecker.checkEveryXHours);
-                    } catch (Exception ee) {
-                        ee.printStackTrace();
-                    }
-                }
-            }
-        });
     }
+
 
     public void stop() {
-        this.schedule.cancel(true);
-        this.stopFallBack = true;
-        this.schedule = null;
+        this.scheduler.shutdownNow();
     }
 
-    public CompletableFuture<Void> getFuture() {
-        return this.schedule;
+    public ScheduledExecutorService getScheduler() {
+        return this.scheduler;
     }
 
 }
