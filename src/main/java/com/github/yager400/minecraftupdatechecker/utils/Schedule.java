@@ -12,21 +12,27 @@ import com.github.yager400.minecraftupdatechecker.UpdateSettings;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Schedule {
 
-    private final ScheduledExecutorService scheduler =
+    private static final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor(runnable -> {
                 Thread t = new Thread(runnable, "MinecraftUpdateChecker");
                 t.setDaemon(true);
                 return t;
             });
 
-    public void start(UpdateSettings updateSettings) {
-        this.scheduler.scheduleWithFixedDelay(
-                () -> this.check(updateSettings),
-                (!updateSettings.isCheckNow()) ? updateSettings.getCheckEveryXHours() : 0,
+    private volatile ScheduledFuture<?> future;
+
+    public synchronized void start(UpdateSettings updateSettings) {
+        if (this.future != null) {
+            throw new IllegalStateException("Already started. Call stop() first.");
+        }
+        this.future = scheduler.scheduleWithFixedDelay(
+                () -> check(updateSettings),
+                updateSettings.isCheckNow() ? 0 : updateSettings.getCheckEveryXHours(),
                 updateSettings.getCheckEveryXHours(),
                 TimeUnit.HOURS
         );
@@ -59,12 +65,12 @@ public class Schedule {
     }
 
 
-    public void stop() {
-        this.scheduler.shutdownNow();
-    }
-
-    public ScheduledExecutorService getScheduler() {
-        return this.scheduler;
+    public synchronized void stop() {
+        ScheduledFuture<?> f = this.future;
+        if (f != null) {
+            f.cancel(false);
+            this.future = null;
+        }
     }
 
 }
