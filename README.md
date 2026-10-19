@@ -1,8 +1,14 @@
-# MinecraftUpdateChecker
+
+<div align="center">
+    <h1>MinecraftUpdateChecker</h1>
+    <img src="https://img.shields.io/github/license/Yager400/MinecraftUpdateChecker?style=for-the-badge&logo=github">
+    <a href="https://www.jitpack.io/#Yager400/MinecraftUpdateChecker"><img src="https://img.shields.io/jitpack/version/com.github.Yager400/MinecraftUpdateChecker?style=for-the-badge"></a>
+</div>
+
 
 **MinecraftUpdateChecker** is a lightweight library that makes it easy to notify server owners when a new version of a plugin they use is available.
 
-##Key Features
+## Key Features
 - Java 8 compatible: The library is compiled for Java 8, making it compatible with plugins and mods that run on Java 8 or later.
 - Minecraft-independent: It does not rely on any Minecraft-specific APIs, so it can also be used in standalone applications.
 - Minimal boilerplate: Developers only need to use a single class to get started.
