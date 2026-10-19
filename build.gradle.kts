@@ -4,7 +4,7 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.yager400.minecraftupdatechecker"
+group = "com.github.Yager400"
 version = "1.0.0"
 java {
     targetCompatibility = JavaVersion.VERSION_1_8
