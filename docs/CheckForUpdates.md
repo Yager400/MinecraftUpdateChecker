@@ -1,7 +1,8 @@
 # Check for updates
 
-Use this guide to check whether your plugin or mod has any available updates.<br>
-**Required configuration:** Steps marked with an asterisk (<b style="color: red">*</b>) must be completed before starting the update checker. The checker may not work correctly if any required setting is missing.
+<p>Use this guide to check whether your plugin or mod has any available updates.<br></p>
+<b>Required configuration:</b> Steps marked with an asterisk (<b style="color: red">*</b>) must be completed before starting the update checker. The checker may not work correctly if any required setting is missing.
+
 ---
 ### Create the update checker
 <b style="color: red">*</b>
