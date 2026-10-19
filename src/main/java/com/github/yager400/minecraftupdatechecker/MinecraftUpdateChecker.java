@@ -26,18 +26,18 @@ public class MinecraftUpdateChecker {
     protected String pluginIdentifier;
     protected Consumer<UpdateData> updatePresent;
     protected Runnable noUpdate = () -> {};
-    protected Consumer<ScheduleError> onError = err -> {};
+    protected Consumer<ScheduleError> onError = scheduleError -> {};
     protected int checkEveryXHours = 1;
     protected boolean checkNow = true;
 
     /**
-     * Sets the plugin/mod supported versions.
+     * Sets the plugin/mod supported versions.<br>
+     * <b>(this field is required)</b>
      * @param from The oldest version your plugin/mod supports
      * @param to The newest version your plugin/mod supports.<br>
      *           You can also use LoaderVersion.LATEST if you are sure that your plugin/mod will work for the next versions
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker setMinecraftVersionRange(MinecraftVersion from, MinecraftVersion to) {
         this.minecraftVersionRange = MinecraftVersion.getRange(from, to);
@@ -45,11 +45,11 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Sets the loaders for your plugin/mod.
+     * Sets the loaders for your plugin/mod.<br>
+     * <b>(this field is required)</b>
      * @param loaders The plugin/mod loader. If the plugin provider supports it, you will get every update for your loader (eg only for velocity)
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker setLoaders(Loader... loaders) {
         this.loaders = loaders;
@@ -57,11 +57,11 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Sets the place where your plugin/mod is hosted
+     * Sets the place where your plugin/mod is hosted<br>
+     * <b>(this field is required)</b>
      * @param provider The plugin/mod provider (eg Modrinth, Hangar or Spigot)
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker setPluginProvider(PluginProvider provider) {
         this.provider = provider.getProvider();
@@ -69,7 +69,8 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Set a custom plugin/mod provider, likely one that you made
+     * Set a custom plugin/mod provider, likely one that you made<br>
+     * <b>(this field is required)</b>
      * @param provider Your plugin/mod provider instance
      * @see MinecraftUpdateChecker#setPluginProvider(PluginProvider)  If you want to use an already existing provider (racomanded)
      * @return This instance
@@ -81,11 +82,11 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Set this plugin/mod version that will be compared from the newer/older ones
+     * Set this plugin/mod version that will be compared from the newer/older ones<br>
+     * <b>(this field is required)</b>
      * @param version Your plugin/mod version as string
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker setVersion(String version) {
         this.thisVersion = version;
@@ -93,11 +94,11 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Sets the plugin/mod identifier.<br> This can be different based of your plugin provider (eg for Modrinth if the slug, Hangar the name and Spigot the id)
+     * Sets the plugin/mod identifier.<br> This can be different based of your plugin provider (eg for Modrinth if the slug, Hangar the name and Spigot the id)<br>
+     * <b>(this field is required)</b>
      * @param pluginIdentifier The plugin/mod identifier as string
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker setPluginIdentifier(String pluginIdentifier) {
         this.pluginIdentifier = pluginIdentifier;
@@ -105,11 +106,11 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Sets a consumer that will be run when a new update is present
+     * Sets a consumer that will be run when a new update is present<br>
+     * <b>(this field is required)</b>
      * @param updatePresent Your consumer
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker onUpdatePresent(Consumer<UpdateData> updatePresent) {
         this.updatePresent = updatePresent;
@@ -164,10 +165,10 @@ public class MinecraftUpdateChecker {
     }
 
     /**
-     * Stars the update async schedule
+     * Stars the update async schedule<br>
+     * <b>(this field is required)</b>
      * @return The schedule instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public Schedule start() {
         Objects.requireNonNull(minecraftVersionRange,  "The loader version range cannot be null!");

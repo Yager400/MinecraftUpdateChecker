@@ -26,3 +26,7 @@ publishing {
         }
     }
 }
+
+tasks.javadoc {
+    setDestinationDir(file("docs/javadoc"))
+}

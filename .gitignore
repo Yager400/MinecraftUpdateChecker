@@ -5,6 +5,8 @@ build/
 !**/src/test/**/build/
 .kotlin
 
+docs/javadoc
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
