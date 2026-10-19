@@ -8,8 +8,8 @@ See the LICENSE file for details.
 package com.github.yager400.minecraftupdatechecker.providers;
 
 import com.github.yager400.minecraftupdatechecker.UpdateData;
-import com.github.yager400.minecraftupdatechecker.data.LoaderVersion;
-import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
+import com.github.yager400.minecraftupdatechecker.data.MinecraftVersion;
+import com.github.yager400.minecraftupdatechecker.data.Loader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -46,7 +46,7 @@ public class HangarProvider extends Provider {
     }
 
     @Override
-    public UpdateData getLastSupportedVersion(LoaderVersion[] versions, SupportedLoaders[] loaders, String json) {
+    public UpdateData getLastSupportedVersion(MinecraftVersion[] versions, Loader[] loaders, String json) {
         JsonObject jsonObject = this.parse(json);
         if (jsonObject == null) {
             return null;
@@ -65,7 +65,7 @@ public class HangarProvider extends Provider {
             Set<String> supportedLoaders = element.getAsJsonObject()
                     .get("platformDependenciesFormatted").getAsJsonObject().keySet();
             for (String loaderVersion : supportedLoaders) {
-                for (SupportedLoaders version : loaders) {
+                for (Loader version : loaders) {
                     if (loaderVersion.equals(version.getLoader().toUpperCase())) {
                         hasLoader = true;
                         break;

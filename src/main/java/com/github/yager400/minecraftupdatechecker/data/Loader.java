@@ -7,7 +7,7 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker.data;
 
-public enum SupportedLoaders {
+public enum Loader {
 
     BUKKIT      ("bukkit"),
     SPIGOT      ("spigot"),
@@ -24,7 +24,7 @@ public enum SupportedLoaders {
 
     private final String loader;
 
-    SupportedLoaders(String loader) {
+    Loader(String loader) {
         this.loader = loader;
     }
 

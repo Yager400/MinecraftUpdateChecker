@@ -12,7 +12,7 @@ import com.github.yager400.minecraftupdatechecker.providers.ModrinthProvider;
 import com.github.yager400.minecraftupdatechecker.providers.Provider;
 import com.github.yager400.minecraftupdatechecker.providers.SpigotProvider;
 
-public enum PluginProviders {
+public enum PluginProvider {
 
     MODRINTH(new ModrinthProvider()),
     /**
@@ -24,7 +24,7 @@ public enum PluginProviders {
 
     private final Provider provider;
 
-    PluginProviders(Provider provider) {
+    PluginProvider(Provider provider) {
         this.provider = provider;
     }
 

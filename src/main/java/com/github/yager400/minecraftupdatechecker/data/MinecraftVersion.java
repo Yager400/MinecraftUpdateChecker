@@ -9,7 +9,7 @@ package com.github.yager400.minecraftupdatechecker.data;
 
 import java.util.Arrays;
 
-public enum LoaderVersion {
+public enum MinecraftVersion {
 
     LATEST      ("26.3"),
     V26_3       ("26.3"),
@@ -91,7 +91,7 @@ public enum LoaderVersion {
 
     public final String version;
 
-    LoaderVersion(String version) {
+    MinecraftVersion(String version) {
         this.version = version;
     }
 
@@ -99,9 +99,9 @@ public enum LoaderVersion {
         return this.version;
     }
 
-    public static LoaderVersion[] getRange(
-            LoaderVersion from,
-            LoaderVersion to
+    public static MinecraftVersion[] getRange(
+            MinecraftVersion from,
+            MinecraftVersion to
     ) {
         if (from == null || to == null) {
             throw new IllegalArgumentException("Versions cannot be null");
@@ -111,14 +111,14 @@ public enum LoaderVersion {
                     "'from' must be <= 'to'"
             );
         }
-        LoaderVersion[] versions = LoaderVersion.values();
-        LoaderVersion[] range = Arrays.copyOfRange(
+        MinecraftVersion[] versions = MinecraftVersion.values();
+        MinecraftVersion[] range = Arrays.copyOfRange(
                 versions,
                 to.ordinal(),
                 from.ordinal() + 1
         );
         for (int i = 0; i < range.length / 2; i++) {
-            LoaderVersion temp = range[i];
+            MinecraftVersion temp = range[i];
             range[i] = range[range.length - 1 - i];
             range[range.length - 1 - i] = temp;
         }

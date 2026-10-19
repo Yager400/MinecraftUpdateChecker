@@ -7,8 +7,8 @@ See the LICENSE file for details.
  */
 package com.github.yager400.minecraftupdatechecker;
 
-import com.github.yager400.minecraftupdatechecker.data.LoaderVersion;
-import com.github.yager400.minecraftupdatechecker.data.SupportedLoaders;
+import com.github.yager400.minecraftupdatechecker.data.MinecraftVersion;
+import com.github.yager400.minecraftupdatechecker.data.Loader;
 import com.github.yager400.minecraftupdatechecker.providers.Provider;
 import com.github.yager400.minecraftupdatechecker.utils.ScheduleError;
 
@@ -19,8 +19,8 @@ import java.util.function.Consumer;
  */
 public final class UpdateSettings {
 
-    private final LoaderVersion[] loaderVersionRange;
-    private final SupportedLoaders[] supportedLoaders;
+    private final MinecraftVersion[] minecraftVersionRange;
+    private final Loader[] loaders;
     private final Provider provider;
     private final String thisVersion;
     private final String pluginIdentifier;
@@ -31,8 +31,8 @@ public final class UpdateSettings {
     private final boolean checkNow;
 
     public UpdateSettings(MinecraftUpdateChecker updateChecker) {
-        this.loaderVersionRange = updateChecker.loaderVersionRange;
-        this.supportedLoaders = updateChecker.supportedLoaders;
+        this.minecraftVersionRange = updateChecker.minecraftVersionRange;
+        this.loaders = updateChecker.loaders;
         this.provider = updateChecker.provider;
         this.thisVersion = updateChecker.thisVersion;
         this.pluginIdentifier = updateChecker.pluginIdentifier;
@@ -49,12 +49,12 @@ public final class UpdateSettings {
                 : err -> {};
     }
 
-    public LoaderVersion[] getLoaderVersionRange() {
-        return this.loaderVersionRange;
+    public MinecraftVersion[] getLoaderVersionRange() {
+        return this.minecraftVersionRange;
     }
 
-    public SupportedLoaders[] getSupportedLoaders() {
-        return this.supportedLoaders;
+    public Loader[] getSupportedLoaders() {
+        return this.loaders;
     }
 
     public Provider getProvider() {
