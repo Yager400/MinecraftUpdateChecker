@@ -9,6 +9,7 @@ version = "1.0.0"
 java {
     targetCompatibility = JavaVersion.VERSION_1_8
     sourceCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
 }
 
 repositories {
@@ -25,8 +26,4 @@ publishing {
             from(components["java"])
         }
     }
-}
-
-tasks.javadoc {
-    setDestinationDir(file("docs/javadoc"))
 }
