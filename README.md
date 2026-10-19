@@ -46,4 +46,4 @@ dependencies {
 }
 ```
 ---
-
+<a href="docs/GettingStarted.md"><button style="width: 100%; height: 40px; border-radius: 10px; background-color: gray; color: white;">Click here for getting started</button></a>
