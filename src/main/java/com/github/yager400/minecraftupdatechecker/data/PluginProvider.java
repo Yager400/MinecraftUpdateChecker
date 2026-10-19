@@ -14,13 +14,9 @@ import com.github.yager400.minecraftupdatechecker.providers.SpigotProvider;
 
 public enum PluginProvider {
 
-    MODRINTH(new ModrinthProvider()),
-    /**
-     * @Experimental This plugin provider is not fully completed and might
-     * be instable.<br> Proceed carefully.
-     */
-    HANGAR(new HangarProvider()),
-    SPIGOT(new SpigotProvider());
+    MODRINTH    (new ModrinthProvider()),
+    HANGAR      (new HangarProvider()),
+    SPIGOT      (new SpigotProvider());
 
     private final Provider provider;
 

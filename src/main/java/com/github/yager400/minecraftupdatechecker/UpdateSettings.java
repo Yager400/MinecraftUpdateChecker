@@ -37,16 +37,10 @@ public final class UpdateSettings {
         this.thisVersion = updateChecker.thisVersion;
         this.pluginIdentifier = updateChecker.pluginIdentifier;
         this.updatePresent = updateChecker.updatePresent;
+        this.noUpdate = updateChecker.noUpdate;
+        this.onError = updateChecker.onError;
         this.checkEveryXHours = updateChecker.checkEveryXHours;
         this.checkNow = updateChecker.checkNow;
-
-        this.noUpdate = updateChecker.noUpdate != null
-                ? updateChecker.noUpdate
-                : () -> {};
-
-        this.onError = updateChecker.onError != null
-                ? updateChecker.onError
-                : err -> {};
     }
 
     public MinecraftVersion[] getLoaderVersionRange() {

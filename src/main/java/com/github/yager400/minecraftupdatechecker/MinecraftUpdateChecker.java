@@ -25,8 +25,8 @@ public class MinecraftUpdateChecker {
     protected String thisVersion;
     protected String pluginIdentifier;
     protected Consumer<UpdateData> updatePresent;
-    protected Runnable noUpdate;
-    protected Consumer<ScheduleError> onError;
+    protected Runnable noUpdate = () -> {};
+    protected Consumer<ScheduleError> onError = err -> {};
     protected int checkEveryXHours = 1;
     protected boolean checkNow = true;
 
@@ -166,6 +166,8 @@ public class MinecraftUpdateChecker {
     /**
      * Stars the update async schedule
      * @return The schedule instance
+     * @since 1.0.0
+     * @Required this field is required
      */
     public Schedule start() {
         Objects.requireNonNull(minecraftVersionRange,  "The loader version range cannot be null!");
