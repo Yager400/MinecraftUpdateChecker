@@ -1,8 +1,9 @@
 
-<div align="center">
+<a align="center">
     <h1>MinecraftUpdateChecker</h1>
-    <img src="https://img.shields.io/github/license/Yager400/MinecraftUpdateChecker?style=for-the-badge&logo=github">
+    <a href="https://github.com/Yager400/MinecraftUpdateChecker/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Yager400/MinecraftUpdateChecker?style=for-the-badge&logo=github"></a>
     <a href="https://www.jitpack.io/#Yager400/MinecraftUpdateChecker"><img src="https://img.shields.io/jitpack/version/com.github.Yager400/MinecraftUpdateChecker?style=for-the-badge"></a>
+    <a href="https://javadoc.jitpack.io/com/github/Yager400/MinecraftUpdateChecker/1.0.0/javadoc/"><img src="https://img.shields.io/badge/Javadoc-Documentation-blue?logo=readthedocs&style=for-the-badge"></a>
 </div>
 
 
