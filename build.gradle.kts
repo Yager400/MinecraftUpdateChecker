@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.yager400.minecraftupdatechecker"
-version = "1.0"
+version = "1.0.0"
 java {
     targetCompatibility = JavaVersion.VERSION_1_8
     sourceCompatibility = JavaVersion.VERSION_1_8
