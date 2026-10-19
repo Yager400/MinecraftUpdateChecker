@@ -1,14 +1,14 @@
 # MinecraftUpdateChecker
 
-**MinecraftUpdateChecker** is a small library that makes easy to inform server owners that uses your plugin to know if a new version was released.
+**MinecraftUpdateChecker** is a lightweight library that makes it easy to notify server owners when a new version of a plugin they use is available.
 
-## Key features
-The library is compiled with **Java 8** so it's 100% compatible with your plugin/mod.<br>
-It also uses **no java api related to minecraft**, meaning that you can implement this even in a separated application. <br>
-It has **very little boilerplate**, the developer just needs to use one class. <br>
-It supports **various plugin provider** (aka places where you can download plugins) such as Modrinth and Hangar.
+##Key Features
+- Java 8 compatible: The library is compiled for Java 8, making it compatible with plugins and mods that run on Java 8 or later.
+- Minecraft-independent: It does not rely on any Minecraft-specific APIs, so it can also be used in standalone applications.
+- Minimal boilerplate: Developers only need to use a single class to get started.
+- Multiple plugin platforms: It supports various plugin hosting platforms, such as Modrinth and Hangar.
 
-## How to use it
+## Installation
 First implement the library into your project like this:
 
 ---
