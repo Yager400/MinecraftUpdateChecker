@@ -121,7 +121,6 @@ public class MinecraftUpdateChecker {
      * @param noUpdate Your runnable
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker onNoUpdatePresent(Runnable noUpdate) {
         this.noUpdate = noUpdate;
@@ -133,7 +132,6 @@ public class MinecraftUpdateChecker {
      * @param onError Your consumer
      * @return This instance
      * @since 1.0.0
-     * @Required this field is required
      */
     public MinecraftUpdateChecker onError(Consumer<ScheduleError> onError) {
         this.onError = onError;
